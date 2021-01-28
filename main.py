@@ -1,32 +1,6 @@
 import pygame
 import os
 import sys
-import requests
-
-
-# API YANDEX MAP
-geocoder_request = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode=Австралия&format=json"
-# Выполняем запрос.
-response = requests.get(geocoder_request)
-if response:
-    # Преобразуем ответ в json-объект
-    json_response = response.json()
-
-    # Получаем первый топоним из ответа геокодера.
-    # Согласно описанию ответа, он находится по следующему пути:
-    toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
-    # Полный адрес топонима:
-    toponym_address = toponym['metaDataProperty']['GeocoderMetaData']['text']
-    # Координаты центра топонима:
-    toponym_coodrinates = toponym["Point"]["pos"]
-    # Печатаем извлечённые из ответа поля:
-    print(toponym_address, "имеет координаты:", toponym_coodrinates)
-    print('https://static-maps.yandex.ru/1.x/?ll=133.795384,-25.694768&spn=20.916457,20.90619&l=sat')
-
-else:
-    print("Ошибка выполнения запроса:")
-    print(geocoder_request)
-    print("Http статус:", response.status_code, "(", response.reason, ")")
 
 
 # PYGAME
@@ -51,14 +25,20 @@ def load_image(name, colorkey=None):
     return image
 
 
-bg = pygame.image.load('img/image.jpeg')
-
-screen.blit(bg, (0, 0))
+materics = ['africa.jpeg', 'america.jpeg', 'australia.jpeg']
 run = True
-
+count = 1
+bg = pygame.image.load('img/africa.jpeg')
+screen.blit(bg, (0, 0))
 while run:
+    if count == 3:
+        count = 0
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        elif event.type == pygame.KEYDOWN:
+            bg = pygame.image.load(f'img/{materics[count]}')
+            count += 1
+            screen.blit(bg, (0, 0))
     pygame.display.update()
 pygame.quit()
